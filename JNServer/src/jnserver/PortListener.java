@@ -26,7 +26,6 @@ public final class PortListener {
         while (!ss.isClosed() && !clientSocket.isClosed()) {
             Socket s = ss.accept();
             write(clientSocket, "NEEDCONNECT\r\n");
-            System.out.println("Get client connect");
             if (ss1 == null) {
                 ss1 = new ServerSocket(port + 1);
             }
@@ -37,7 +36,6 @@ public final class PortListener {
                         while (!ss1.isClosed() && !clientSocket.isClosed()) {
                             Socket s1 = ss1.accept();
                             new JNThread(s1, s).start();
-                            System.out.println("    Get JNClient connect");
                             break;
                         }
                     } catch (IOException ex) {

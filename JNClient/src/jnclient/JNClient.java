@@ -42,7 +42,6 @@ public class JNClient {
             name = com.split("&")[0];
         }
         if (name.contains("NEEDCONNECT")) {
-            System.out.println(name);
             Socket s1 = new Socket(serverIp, connectPort);
             Socket s2 = new Socket(outIp, outPort);
             new JNThread(s1, s2).start();

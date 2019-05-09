@@ -28,17 +28,21 @@ public class JNThread extends Thread {
             sis = server.getInputStream();
             sos = server.getOutputStream();
         } catch (IOException ex) {
+            return;
         }
         new Thread() {
             @Override
             public void run() {
-                while (!isClose(client) && !isClose(server)) {
+                try {
+                    byte[] data = new byte[len];
+                    while (sis.read(data) != -1) {
+                        cos.write(data);
+                    }
+                } catch (IOException ex) {
                     try {
-                        byte[] data = new byte[len];
-                        while (sis.read(data) != -1) {
-                            cos.write(data);
-                        }
-                    } catch (IOException ex) {
+                        client.close();
+                        server.close();
+                    } catch (IOException ex1) {
                     }
                 }
             }
@@ -46,25 +50,19 @@ public class JNThread extends Thread {
         new Thread() {
             @Override
             public void run() {
-                while (!isClose(client) && !isClose(server)) {
+                try {
+                    byte[] data = new byte[len];
+                    while (cis.read(data) != -1) {
+                        sos.write(data);
+                    }
+                } catch (IOException ex) {
                     try {
-                        byte[] data = new byte[len];
-                        while (cis.read(data) != -1) {
-                            sos.write(data);
-                        }
-                    } catch (IOException ex) {
+                        client.close();
+                        server.close();
+                    } catch (IOException ex1) {
                     }
                 }
             }
         }.start();
-    }
-
-    public Boolean isClose(Socket socket) {
-        try {
-            socket.sendUrgentData(0xFF);
-        } catch (IOException se) {
-            return true;
-        }
-        return false;
     }
 }
